@@ -809,6 +809,37 @@ void Hud::drawHotbar(const v2s32 &pos, const v2f &offset, u16 dir, const v2f &al
 
 void Hud::drawCrosshair()
 {
+	auto font = g_fontengine->getFont();
+	if (driver) {
+		video::SColor color(255, 255, 255, 255);
+
+		// ロゴ
+		std::wstring logo = L"Rucchi Client";
+
+		core::rect<s32> logo_pos(10, 10, 200, 50);
+
+		font->draw(logo.c_str(), logo_pos, color);
+
+		// 座標
+		LocalPlayer *player = client->getEnv().getLocalPlayer();
+		if (player) {
+			v3f pos = player->getPosition();
+			pos /= BS;
+
+			std::wstringstream ss;
+			ss << L"XYZ: "
+			<< (int)pos.X << L", "
+			<< (int)pos.Y << L", "
+			<< (int)pos.Z;
+
+			auto driver = RenderingEngine::get_video_driver();
+
+			core::rect<s32> pos_rect(10, 40, 300, 70);
+
+			font->draw(ss.str().c_str(), pos_rect, color);
+		}
+	}
+	
 	auto draw_image_crosshair = [this] (video::ITexture *tex) {
 		core::dimension2di orig_size(tex->getOriginalSize());
 		// Integer scaling to avoid artifacts, floor instead of round since too
