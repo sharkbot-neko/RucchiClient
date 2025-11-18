@@ -138,3 +138,12 @@ lib/irrlichtmt
 
 # Generated mod storage database
 client/mod_storage.sqlite
+
+vcpkg_installed/
+x64/
+lib/catch2
+lib/
+irr/
+src/luanti.dir
+src/EngineCommon.dir
+*.log

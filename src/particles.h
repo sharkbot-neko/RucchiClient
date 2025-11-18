@@ -1,4 +1,4 @@
-// Luanti
+﻿// Luanti
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // Copyright (C) 2013 celeron55, Perttu Ahola <celeron55@gmail.com>
 
@@ -211,10 +211,10 @@ namespace ParticleParamTypes
 		std::ostringstream s;
 		const char* icon;
 		switch (t.style) {
-			case TweenStyle::fwd: icon = "→"; break;
-			case TweenStyle::rev: icon = "←"; break;
-			case TweenStyle::pulse: icon = "↔"; break;
-			case TweenStyle::flicker: icon = "↯"; break;
+			case TweenStyle::fwd: icon = u8"→"; break;
+			case TweenStyle::rev: icon = u8"←"; break;
+			case TweenStyle::pulse: icon = u8"↔"; break;
+			case TweenStyle::flicker: icon = u8"↯"; break;
 		}
 		s << "tween<";
 		if (t.reps != 1)
