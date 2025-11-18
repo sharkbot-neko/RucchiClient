@@ -447,6 +447,8 @@ public:
 
 	bool inhibit_inventory_revert = false;
 
+	void updateChatMessageAllowance();
+
 private:
 	void loadMods();
 

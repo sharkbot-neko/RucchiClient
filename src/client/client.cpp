@@ -1,4 +1,4 @@
-// Luanti
+﻿// Luanti
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // Copyright (C) 2013 celeron55, Perttu Ahola <celeron55@gmail.com>
 
@@ -1323,29 +1323,79 @@ bool Client::canSendChatMessage() const
 	return true;
 }
 
+// ここにチャットメッセージを置く
+void Client::updateChatMessageAllowance() {
+    u32 now = time(NULL);
+    // time_passed は秒単位と仮定
+    float time_passed = now - m_last_chat_message_sent;
+    m_last_chat_message_sent = now;
+
+    // 許容量の回復 (リフィルレート: CLIENT_CHAT_MESSAGE_LIMIT_PER_10S / 8.0f メッセージ/秒)
+    m_chat_message_allowance += time_passed * (CLIENT_CHAT_MESSAGE_LIMIT_PER_10S / 8.0f);
+
+    // 許容量の上限を設定
+    if (m_chat_message_allowance > CLIENT_CHAT_MESSAGE_LIMIT_PER_10S)
+        m_chat_message_allowance = CLIENT_CHAT_MESSAGE_LIMIT_PER_10S;
+}
+
 void Client::sendChatMessage(const std::wstring &message)
 {
-	const s16 max_queue_size = g_settings->getS16("max_out_chat_queue_size");
-	if (canSendChatMessage()) {
-		u32 now = time(NULL);
-		float time_passed = now - m_last_chat_message_sent;
-		m_last_chat_message_sent = now;
+    const s16 max_queue_size = g_settings->getS16("max_out_chat_queue_size");
+    
+    if (message.empty()) {
+        return;
+    }
 
-		m_chat_message_allowance += time_passed * (CLIENT_CHAT_MESSAGE_LIMIT_PER_10S / 8.0f);
-		if (m_chat_message_allowance > CLIENT_CHAT_MESSAGE_LIMIT_PER_10S)
-			m_chat_message_allowance = CLIENT_CHAT_MESSAGE_LIMIT_PER_10S;
+    // コマンド処理
+    if (message.at(0) == L'.') {
+        size_t first_space = message.find(L' ');
+        std::wstring command_name;
+        std::wstring arguments;
 
-		m_chat_message_allowance -= 1.0f;
+        if (first_space == std::wstring::npos) {
+            command_name = message.substr(1);
+            arguments = L"";
+        } else {
+            // コマンド名と引数 (.command arguments...)
+            command_name = message.substr(1, first_space - 1); 
+            
+            arguments = message.substr(first_space + 1);
+            arguments.erase(0, arguments.find_first_not_of(L' '));
+        }
 
-		NetworkPacket pkt(TOSERVER_CHAT_MESSAGE, 2 + message.size() * sizeof(u16));
-		pkt << message;
-		Send(&pkt);
-	} else if (m_out_chat_queue.size() < (u16) max_queue_size || max_queue_size < 0) {
-		m_out_chat_queue.push(message);
-	} else {
-		infostream << "Could not queue chat message because maximum out chat queue size ("
-				<< max_queue_size << ") is reached." << std::endl;
-	}
+        if (!command_name.empty()) {
+            // Sayコマンド
+            if (command_name == L"say") {
+                updateChatMessageAllowance(); 
+                
+                m_chat_message_allowance -= 1.0f;
+
+                NetworkPacket pkt(TOSERVER_CHAT_MESSAGE, 2 + arguments.size() * sizeof(u16));
+                pkt << arguments;
+                Send(&pkt);
+            }
+            // 他のコマンド処理はここに追加...
+
+            return;
+        }
+        return;
+    }
+
+    updateChatMessageAllowance();
+
+    if (canSendChatMessage()) {
+        m_chat_message_allowance -= 1.0f;
+
+        NetworkPacket pkt(TOSERVER_CHAT_MESSAGE, 2 + message.size() * sizeof(u16));
+        pkt << message;
+        Send(&pkt);
+        
+    } else if (m_out_chat_queue.size() < (u16) max_queue_size || max_queue_size < 0) {
+        m_out_chat_queue.push(message);
+    } else {
+        infostream << "Could not queue chat message because maximum out chat queue size ("
+                   << max_queue_size << ") is reached." << std::endl;
+    }
 }
 
 void Client::clearOutChatQueue()
