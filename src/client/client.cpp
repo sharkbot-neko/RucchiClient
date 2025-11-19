@@ -1324,17 +1324,14 @@ bool Client::canSendChatMessage() const
 	return true;
 }
 
-// ここにチャットメッセージを置く
 void Client::updateChatMessageAllowance() {
     u32 now = time(NULL);
-    // time_passed は秒単位と仮定
+	
     float time_passed = now - m_last_chat_message_sent;
     m_last_chat_message_sent = now;
 
-    // 許容量の回復 (リフィルレート: CLIENT_CHAT_MESSAGE_LIMIT_PER_10S / 8.0f メッセージ/秒)
     m_chat_message_allowance += time_passed * (CLIENT_CHAT_MESSAGE_LIMIT_PER_10S / 8.0f);
 
-    // 許容量の上限を設定
     if (m_chat_message_allowance > CLIENT_CHAT_MESSAGE_LIMIT_PER_10S)
         m_chat_message_allowance = CLIENT_CHAT_MESSAGE_LIMIT_PER_10S;
 }

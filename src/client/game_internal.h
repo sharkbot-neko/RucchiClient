@@ -23,6 +23,8 @@
 #include "sky.h"
 #include "util/pointedthing.h"
 
+#include "gui/cheatMenu.h"
+
 /* DO NOT INCLUDE THIS FROM OUTSIDE GAME.CPP */
 
 class Game;
@@ -116,6 +118,9 @@ protected:
 	// Basic initialisation
 	bool init(const std::string &map_dir, const std::string &address,
 			u16 port, const SubgameSpec &gamespec);
+
+	CheatMenu *m_cheat_menu = nullptr;
+
 	bool initSound();
 	bool createServer(const std::string &map_dir,
 			const SubgameSpec &gamespec, u16 port);

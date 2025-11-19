@@ -44,6 +44,7 @@ public:
 		bool show_minimal_debug = false;
 		bool show_basic_debug = false;
 		bool show_profiler_graph = false;
+		bool show_cheat_menu = false;
 	};
 
 	void init();
@@ -79,6 +80,8 @@ public:
 	void toggleProfiler();
 
 	void clearText();
+
+	void toggleCheatMenu();
 
 private:
 	Flags m_flags;

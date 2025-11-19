@@ -52,6 +52,8 @@
 #include "util/tracy_wrapper.h"
 #include "item_visuals_manager.h"
 
+#include "gui/cheatMenu.h"
+
 #if USE_SOUND
 	#include "client/sound/sound_openal.h"
 #endif
@@ -720,6 +722,10 @@ void Game::run()
 void Game::shutdown()
 {
 	// Delete text and menus first
+
+	if (m_cheat_menu)
+		delete m_cheat_menu;
+
 	m_game_ui->clearText();
 	m_game_formspec.reset();
 	while (g_menumgr.menuCount() > 0) {
@@ -1057,6 +1063,8 @@ bool Game::initGui()
 	// Chat backend and console
 	gui_chat_console = make_irr<GUIChatConsole>(guienv, guienv->getRootGUIElement(),
 			-1, chat_backend, client, &g_menumgr);
+
+	m_cheat_menu = new CheatMenu(client);
 
 	if (shouldShowTouchControls())
 		g_touchcontrols = new TouchControls(device, texture_src);
@@ -1522,6 +1530,18 @@ void Game::processUserInput(f32 dtime)
 
 void Game::processKeyInput()
 {
+	if (wasKeyDown(KeyType::SELECT_UP)) {
+		m_cheat_menu->selectUp();
+	} else if (wasKeyDown(KeyType::SELECT_DOWN)) {
+		m_cheat_menu->selectDown();
+	} else if (wasKeyDown(KeyType::SELECT_LEFT)) {
+		m_cheat_menu->selectLeft();
+	} else if (wasKeyDown(KeyType::SELECT_RIGHT)) {
+		m_cheat_menu->selectRight();
+	} else if (wasKeyDown(KeyType::SELECT_CONFIRM)) {
+		m_cheat_menu->selectConfirm();
+	}
+
 	if (wasKeyDown(KeyType::DROP)) {
 		dropSelectedItem(isKeyDown(KeyType::SNEAK));
 	} else if (wasKeyDown(KeyType::AUTOFORWARD)) {
@@ -1621,6 +1641,8 @@ void Game::processKeyInput()
 		quicktune->inc();
 	} else if (wasKeyDown(KeyType::QUICKTUNE_DEC)) {
 		quicktune->dec();
+	} else if (wasKeyDown(KeyType::TOGGLE_CHEAT_MENU)) {
+		m_game_ui->toggleCheatMenu();
 	}
 
 	if (!isKeyDown(KeyType::JUMP) && runData.reset_jump_timer) {

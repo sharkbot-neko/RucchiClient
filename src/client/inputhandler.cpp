@@ -26,9 +26,17 @@ void MyEventReceiver::reloadKeybindings()
 	keybindings[KeyType::DIG] = getKeySetting("keymap_dig");
 	keybindings[KeyType::PLACE] = getKeySetting("keymap_place");
 
+	keybindings[KeyType::SELECT_UP] = getKeySetting("keymap_select_up");
+	keybindings[KeyType::SELECT_DOWN] = getKeySetting("keymap_select_down");
+	keybindings[KeyType::SELECT_LEFT] = getKeySetting("keymap_select_left");
+	keybindings[KeyType::SELECT_RIGHT] = getKeySetting("keymap_select_right");
+	keybindings[KeyType::SELECT_CONFIRM] = getKeySetting("keymap_select_confirm");
+
 	keybindings[KeyType::ESC] = EscapeKey;
 
 	keybindings[KeyType::AUTOFORWARD] = getKeySetting("keymap_autoforward");
+
+	keybindings[KeyType::TOGGLE_CHEAT_MENU] = getKeySetting("keymap_toggle_cheat_menu");
 
 	keybindings[KeyType::DROP] = getKeySetting("keymap_drop");
 	keybindings[KeyType::INVENTORY] = getKeySetting("keymap_inventory");

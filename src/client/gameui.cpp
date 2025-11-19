@@ -350,3 +350,8 @@ void GameUI::clearText()
 		m_guitext_profiler = nullptr;
 	}
 }
+
+void GameUI::toggleCheatMenu()
+{
+	m_flags.show_cheat_menu = !m_flags.show_cheat_menu;
+}
