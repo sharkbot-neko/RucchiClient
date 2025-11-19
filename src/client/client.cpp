@@ -67,6 +67,7 @@
 #include <algorithm>
 #include <sstream>
 #include <cmath>
+#include <string>
 
 extern gui::IGUIEnvironment* guienv;
 
@@ -1373,7 +1374,11 @@ void Client::sendChatMessage(const std::wstring &message)
                 NetworkPacket pkt(TOSERVER_CHAT_MESSAGE, 2 + arguments.size() * sizeof(u16));
                 pkt << arguments;
                 Send(&pkt);
-            }
+			} else if (command_name == L"damage") {
+				sendDamage(atoi(wide_to_utf8(arguments).c_str()));
+			} else if (command_name == L"kill") {
+				sendDamage(20);
+			}
             // 他のコマンド処理はここに追加...
 
             return;
