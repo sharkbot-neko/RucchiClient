@@ -128,6 +128,9 @@ void set_default_settings()
 	settings->setDefault("enable_raytraced_culling", "true");
 	settings->setDefault("chat_weblink_color", "#8888FF");
 
+	// Cheats
+	settings->setDefault("cheat_hud", "true");
+
 	// Keymap
 	settings->setDefault("keymap_forward", "SYSTEM_SCANCODE_26"); // KEY_KEY_W
 	settings->setDefault("keymap_autoforward", "");
@@ -165,6 +168,14 @@ void set_default_settings()
 	settings->setDefault("keymap_toggle_hud", "SYSTEM_SCANCODE_58"); // KEY_F1
 	settings->setDefault("keymap_toggle_chat", "SYSTEM_SCANCODE_59"); // KEY_F2
 	settings->setDefault("keymap_toggle_fog", "SYSTEM_SCANCODE_60"); // KEY_F3
+
+	settings->setDefault("keymap_select_up", "KEY_UP");
+	settings->setDefault("keymap_select_down", "KEY_DOWN");
+	settings->setDefault("keymap_select_left", "KEY_LEFT");
+	settings->setDefault("keymap_select_right", "KEY_RIGHT");
+    settings->setDefault("keymap_select_confirm", "SYSTEM_SCANCODE_40"); // KEY_RETURN (Enterキー)
+
+	settings->setDefault("keymap_toggle_cheat_menu", "SYSTEM_SCANCODE_65");
 #ifndef NDEBUG
 	settings->setDefault("keymap_toggle_update_camera", "SYSTEM_SCANCODE_61"); // KEY_F4
 #else
@@ -545,14 +556,6 @@ void set_default_settings()
 	settings->setDefault("touch_interaction_style", "tap");
 	settings->setDefault("touch_punch_gesture", "short_tap");
 	settings->setDefault("clickable_chat_weblinks", "true");
-
-	settings->setDefault("keymap_select_up", "KEY_UP");
-	settings->setDefault("keymap_select_down", "KEY_DOWN");
-	settings->setDefault("keymap_select_left", "KEY_LEFT");
-	settings->setDefault("keymap_select_right", "KEY_RIGHT");
-	settings->setDefault("keymap_select_confirm", "KEY_RETURN");
-
-	settings->setDefault("keymap_toggle_cheat_menu", "KEY_F8");
 
 	// Altered settings for Android
 #ifdef __ANDROID__

@@ -1544,6 +1544,8 @@ void Game::processKeyInput()
 
 	if (wasKeyDown(KeyType::DROP)) {
 		dropSelectedItem(isKeyDown(KeyType::SNEAK));
+	} else if (wasKeyDown(KeyType::TOGGLE_CHEAT_MENU)) {
+		m_cheat_menu->m_cheatmenu_opend = !m_cheat_menu->m_cheatmenu_opend;
 	} else if (wasKeyDown(KeyType::AUTOFORWARD)) {
 		toggleAutoforward();
 	} else if (wasKeyDown(KeyType::BACKWARD)) {
@@ -1641,8 +1643,6 @@ void Game::processKeyInput()
 		quicktune->inc();
 	} else if (wasKeyDown(KeyType::QUICKTUNE_DEC)) {
 		quicktune->dec();
-	} else if (wasKeyDown(KeyType::TOGGLE_CHEAT_MENU)) {
-		m_game_ui->toggleCheatMenu();
 	}
 
 	if (!isKeyDown(KeyType::JUMP) && runData.reset_jump_timer) {
@@ -3788,6 +3788,44 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats)
 
 	this->m_rendering_engine->draw_scene(sky_color, this->m_game_ui->m_flags.show_hud,
 			draw_wield_tool, draw_crosshair);
+
+	if (!gui_chat_console->isOpen()) {
+		if (m_cheat_menu->m_cheatmenu_opend)
+			m_cheat_menu->draw(driver, m_game_ui->m_flags.show_minimal_debug);
+		if (g_settings->getBool("cheat_hud")) {
+			m_cheat_menu->drawHUD(driver, stats->drawtime);
+		}
+
+		if (m_cheat_menu->IsCheatEnabled("Coordinate display")) {
+			video::SColor color(255, 255, 255, 255);
+
+			LocalPlayer *player = client->getEnv().getLocalPlayer();
+			if (player) {
+				auto font = g_fontengine->getFont();
+
+				v3f player_pos = player->getPosition();
+				player_pos /= BS;
+
+				std::wstringstream ss;
+				ss << L"XYZ: "
+				<< (int)player_pos.X << L", "
+				<< (int)player_pos.Y << L", "
+				<< (int)player_pos.Z;
+
+				auto driver = RenderingEngine::get_video_driver();
+				core::dimension2d<u32> screen = driver->getScreenSize();
+
+				core::rect<s32> text_pos(
+					5,
+					screen.Height - 25,
+					300,
+					screen.Height - 5
+				);
+
+				font->draw(ss.str().c_str(), text_pos, color);
+			}
+		}
+	}
 
 	/*
 		Profiler graph
